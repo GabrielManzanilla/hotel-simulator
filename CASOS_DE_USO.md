@@ -1,6 +1,6 @@
 # Casos de Uso - Hotel Simulator
 
-Este documento contiene la configuración completa de los 4 casos de uso implementados en el simulador hotelero.
+Este documento contiene la configuración completa de los 5 casos de uso implementados en el simulador hotelero.
 
 ## 📋 Casos de Uso Disponibles
 
@@ -243,9 +243,142 @@ curl -X POST http://localhost:3001/webhook \
   }'
 ```
 
+### Consultar Reservaciones
+```bash
+# Consultar por ID
+curl -X POST http://localhost:3001/webhook \
+  -H "Content-Type: application/json" \
+  -d '{
+    "metadata": {
+      "use_case_id": "gen_get_reservations",
+      "agent_id": "test"
+    },
+    "arguments": {
+      "reservation_id": "RES-1001"
+    }
+  }'
+
+# Consultar por email
+curl -X POST http://localhost:3001/webhook \
+  -H "Content-Type: application/json" \
+  -d '{
+    "metadata": {
+      "use_case_id": "gen_get_reservations",
+      "agent_id": "test"
+    },
+    "arguments": {
+      "guest_email": "juan@example.com"
+    }
+  }'
+
+# Listar todas (con límite)
+curl -X POST http://localhost:3001/webhook \
+  -H "Content-Type: application/json" \
+  -d '{
+    "metadata": {
+      "use_case_id": "gen_get_reservations",
+      "agent_id": "test"
+    },
+    "arguments": {
+      "limit": 10,
+      "status": "confirmed"
+    }
+  }'
+```
+
 ---
 
-### 4. Consultar Directorio Telefónico
+### 4. Consultar Reservaciones
+
+**Configuración:**
+```json
+{
+  "use_case_id": "gen_get_reservations",
+  "name": "Consultar Reservaciones",
+  "description": "Consulta las reservaciones existentes por ID, email o lista todas las reservaciones",
+  "tool_name": "consultar_reservaciones",
+  "tool_description": "Consulta las reservaciones del hotel. Permite buscar una reservación específica por ID, buscar reservaciones por email del huésped, o listar todas las reservaciones con filtros opcionales por status.",
+  "parameter_schema": {
+    "type": "object",
+    "properties": {
+      "reservation_id": {
+        "type": "string",
+        "description": "ID de la reservación específica a consultar (opcional, formato: RES-XXXX)"
+      },
+      "guest_email": {
+        "type": "string",
+        "description": "Email del huésped para buscar sus reservaciones (opcional, formato: email@example.com)"
+      },
+      "status": {
+        "type": "string",
+        "description": "Filtrar reservaciones por status (opcional): confirmed, cancelled, completed",
+        "enum": ["confirmed", "cancelled", "completed"]
+      },
+      "limit": {
+        "type": "number",
+        "description": "Límite de resultados a mostrar (opcional, default: 10)"
+      }
+    },
+    "required": []
+  }
+}
+```
+
+**Ejemplo de uso:**
+- Usuario: "¿Cuál es mi reservación RES-1001?"
+- Usuario: "Quiero ver mis reservaciones con el email juan@example.com"
+- Usuario: "Muéstrame todas las reservaciones confirmadas"
+- Usuario: "Lista las últimas 5 reservaciones"
+- Respuesta: Información detallada de la(s) reservación(es) encontrada(s)
+
+**Características:**
+- Consultar una reservación específica por ID
+- Buscar reservaciones por email del huésped
+- Listar todas las reservaciones con límite opcional
+- Filtrar por status (confirmed, cancelled, completed)
+- Información completa: huésped, habitación, fechas, precios, promociones aplicadas
+
+**Formato de respuesta:**
+La respuesta es un JSON serializado como string que incluye:
+- `success`: Boolean indicando si la operación fue exitosa
+- `message`: Mensaje descriptivo
+- `reservation` o `reservations`: Datos de la(s) reservación(es)
+- `total`: Total de reservaciones encontradas
+- `showing`: Número de reservaciones mostradas (si aplica)
+
+**Ejemplo de respuesta para una reservación específica:**
+```json
+{
+  "success": true,
+  "message": "Reservación RES-1001 encontrada",
+  "reservation": {
+    "reservation_id": "RES-1001",
+    "guest_name": "Juan Pérez",
+    "guest_email": "juan@example.com",
+    "guest_phone": "+52 55 1234 5678",
+    "room_type": "deluxe",
+    "room_name": "Habitación Deluxe",
+    "check_in_date": "2025-03-15",
+    "check_out_date": "2025-03-18",
+    "nights": 3,
+    "base_price": 7500,
+    "discount": 1500,
+    "total_price": 6000,
+    "promotion": {
+      "id": "PROM001",
+      "name": "Descuento de Temporada",
+      "discount_percentage": 20
+    },
+    "status": "confirmed",
+    "created_at": "2025-12-09T18:07:44.744Z"
+  },
+  "total": 1
+}
+```
+
+---
+
+### 5. Consultar Directorio Telefónico
 
 **Configuración:**
 ```json

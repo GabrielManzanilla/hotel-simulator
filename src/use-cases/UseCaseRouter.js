@@ -35,6 +35,12 @@ class UseCaseRouter {
         'crear_reservacion', 'create_reservation', 'hacer_reserva', 'make_reservation',
         'gen_create_reservation'
       ],
+      getReservations: [
+        'consultar_reservaciones', 'get_reservations', 'listar_reservaciones', 'list_reservations',
+        'ver_reservaciones', 'view_reservations', 'buscar_reservacion', 'search_reservation',
+        'mis_reservaciones', 'my_reservations', 'historial_reservaciones', 'reservation_history',
+        'gen_get_reservations', 'gen_consultar_reservaciones', 'reservaciones', 'reservations'
+      ],
       getPhoneDirectory: [
         'directorio', 'directory', 'telefono', 'phone', 'contacto', 'contact',
         'directorio_telefonico', 'phone_directory', 'directorio_telefono',

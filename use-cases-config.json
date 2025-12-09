@@ -191,6 +191,66 @@
       "specific_instructions": "Usar cuando el usuario quiera hacer una reservación, reservar una habitación, hacer un booking, o necesite confirmar una estancia en el hotel. El sistema generará automáticamente un código alfanumérico (formato REC-XXXX-YYYY) que debe presentarse en recepción."
     },
     {
+      "use_case_id": "gen_get_reservations",
+      "name": "Consultar Reservaciones",
+      "description": "Consulta las reservaciones existentes por ID, email o lista todas las reservaciones",
+      "tool_name": "consultar_reservaciones",
+      "tool_description": "Consulta las reservaciones del hotel. Permite buscar una reservación específica por ID (formato RES-XXXX), buscar todas las reservaciones de un huésped por email, o listar todas las reservaciones con filtros opcionales por status (confirmed, cancelled, completed) y límite de resultados.",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "reservation_id": {
+            "type": "string",
+            "description": "ID de la reservación específica a consultar (opcional, formato: RES-XXXX)"
+          },
+          "reservationId": {
+            "type": "string",
+            "description": "ID de reservación (alternativo)"
+          },
+          "id_reservacion": {
+            "type": "string",
+            "description": "ID de reservación (alternativo en español)"
+          },
+          "guest_email": {
+            "type": "string",
+            "description": "Email del huésped para buscar sus reservaciones (opcional, formato: email@example.com)",
+            "format": "email"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email del huésped (alternativo)",
+            "format": "email"
+          },
+          "correo": {
+            "type": "string",
+            "description": "Email del huésped (alternativo en español)",
+            "format": "email"
+          },
+          "status": {
+            "type": "string",
+            "description": "Filtrar reservaciones por status (opcional): confirmed, cancelled, completed",
+            "enum": ["confirmed", "cancelled", "completed"]
+          },
+          "estado": {
+            "type": "string",
+            "description": "Estado de la reservación (alternativo)",
+            "enum": ["confirmed", "cancelled", "completed"]
+          },
+          "limit": {
+            "type": "number",
+            "description": "Límite de resultados a mostrar (opcional, default: 10)"
+          },
+          "limite": {
+            "type": "number",
+            "description": "Límite (alternativo)"
+          }
+        },
+        "required": []
+      },
+      "prompt_fragment": "Permite consultar reservaciones por ID, email del huésped, o listar todas las reservaciones con filtros",
+      "specific_instructions": "Usar cuando el usuario quiera consultar una reservación específica por ID, buscar sus reservaciones por email, ver el historial de reservaciones, o listar reservaciones con filtros por status. El sistema puede buscar por ID de reservación (formato RES-XXXX), por email del huésped, o listar todas con opciones de filtrado."
+    },
+    {
       "use_case_id": "gen_directorio_telef_nico_1764314627615",
       "name": "Consultar Directorio Telefónico",
       "description": "Consulta el directorio telefónico de diferentes áreas del hotel",

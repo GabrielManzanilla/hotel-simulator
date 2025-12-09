@@ -24,6 +24,7 @@ const PhoneDirectoryService = require('./services/PhoneDirectoryService');
 const GetPromotionsUseCase = require('./use-cases/GetPromotionsUseCase');
 const GetRoomPricesUseCase = require('./use-cases/GetRoomPricesUseCase');
 const CreateReservationUseCase = require('./use-cases/CreateReservationUseCase');
+const GetReservationsUseCase = require('./use-cases/GetReservationsUseCase');
 const GetPhoneDirectoryUseCase = require('./use-cases/GetPhoneDirectoryUseCase');
 const UseCaseRouter = require('./use-cases/UseCaseRouter');
 
@@ -94,6 +95,8 @@ function initializeUseCases() {
     'gen_get_promotions': new GetPromotionsUseCase(promotionsService, Logger),
     'gen_get_room_prices': new GetRoomPricesUseCase(roomsService, Logger),
     'gen_create_reservation': new CreateReservationUseCase(reservationsService, Logger),
+    'gen_get_reservations': new GetReservationsUseCase(reservationsService, Logger),
+    'gen_consultar_reservaciones': new GetReservationsUseCase(reservationsService, Logger),
     'gen_directorio_telef_nico_1764314627615': new GetPhoneDirectoryUseCase(phoneDirectoryService, Logger),
     // Mantener compatibilidad con el ID anterior
     'gen_get_phone_directory': new GetPhoneDirectoryUseCase(phoneDirectoryService, Logger)
