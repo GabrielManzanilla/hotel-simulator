@@ -97,6 +97,7 @@ function initializeUseCases() {
     'gen_create_reservation': new CreateReservationUseCase(reservationsService, Logger),
     'gen_get_reservations': new GetReservationsUseCase(reservationsService, Logger),
     'gen_consultar_reservaciones': new GetReservationsUseCase(reservationsService, Logger),
+    'gen_consulta_de_reservaciones_1765316034386': new GetReservationsUseCase(reservationsService, Logger),
     'gen_directorio_telef_nico_1764314627615': new GetPhoneDirectoryUseCase(phoneDirectoryService, Logger),
     // Mantener compatibilidad con el ID anterior
     'gen_get_phone_directory': new GetPhoneDirectoryUseCase(phoneDirectoryService, Logger)

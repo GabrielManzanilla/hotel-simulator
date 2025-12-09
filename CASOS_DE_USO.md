@@ -250,7 +250,7 @@ curl -X POST http://localhost:3001/webhook \
   -H "Content-Type: application/json" \
   -d '{
     "metadata": {
-      "use_case_id": "gen_get_reservations",
+      "use_case_id": "gen_consulta_de_reservaciones_1765316034386",
       "agent_id": "test"
     },
     "arguments": {
@@ -263,7 +263,7 @@ curl -X POST http://localhost:3001/webhook \
   -H "Content-Type: application/json" \
   -d '{
     "metadata": {
-      "use_case_id": "gen_get_reservations",
+      "use_case_id": "gen_consulta_de_reservaciones_1765316034386",
       "agent_id": "test"
     },
     "arguments": {
@@ -276,7 +276,7 @@ curl -X POST http://localhost:3001/webhook \
   -H "Content-Type: application/json" \
   -d '{
     "metadata": {
-      "use_case_id": "gen_get_reservations",
+      "use_case_id": "gen_consulta_de_reservaciones_1765316034386",
       "agent_id": "test"
     },
     "arguments": {
@@ -293,7 +293,7 @@ curl -X POST http://localhost:3001/webhook \
 **Configuración:**
 ```json
 {
-  "use_case_id": "gen_get_reservations",
+  "use_case_id": "gen_consulta_de_reservaciones_1765316034386",
   "name": "Consultar Reservaciones",
   "description": "Consulta las reservaciones existentes por ID, email o lista todas las reservaciones",
   "tool_name": "consultar_reservaciones",

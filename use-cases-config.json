@@ -191,7 +191,7 @@
       "specific_instructions": "Usar cuando el usuario quiera hacer una reservación, reservar una habitación, hacer un booking, o necesite confirmar una estancia en el hotel. El sistema generará automáticamente un código alfanumérico (formato REC-XXXX-YYYY) que debe presentarse en recepción."
     },
     {
-      "use_case_id": "gen_get_reservations",
+      "use_case_id": "gen_consulta_de_reservaciones_1765316034386",
       "name": "Consultar Reservaciones",
       "description": "Consulta las reservaciones existentes por ID, email o lista todas las reservaciones",
       "tool_name": "consultar_reservaciones",
