@@ -1,0 +1,276 @@
+{
+  "use_cases": [
+    {
+      "use_case_id": "gen_get_promotions",
+      "name": "Consultar Promociones Disponibles",
+      "description": "Consulta las promociones y descuentos disponibles en el hotel",
+      "tool_name": "consultar_promociones",
+      "tool_description": "Consulta las promociones y descuentos disponibles en el hotel. Devuelve información sobre descuentos, fechas de vigencia, tipos de habitaciones aplicables y condiciones especiales.",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "room_type": {
+            "type": "string",
+            "description": "Tipo de habitación para filtrar promociones (opcional): standard, deluxe, suite",
+            "enum": ["standard", "deluxe", "suite"]
+          },
+          "tipo_habitacion": {
+            "type": "string",
+            "description": "Tipo de habitación (alternativo)",
+            "enum": ["standard", "deluxe", "suite"]
+          },
+          "check_in_date": {
+            "type": "string",
+            "description": "Fecha de entrada para verificar promociones vigentes (opcional, formato: YYYY-MM-DD)",
+            "format": "date"
+          },
+          "fecha_entrada": {
+            "type": "string",
+            "description": "Fecha de entrada (alternativo)",
+            "format": "date"
+          }
+        },
+        "required": []
+      },
+      "prompt_fragment": "Permite consultar las promociones y descuentos disponibles en el hotel",
+      "specific_instructions": "Usar cuando el usuario pregunte por promociones, descuentos, ofertas especiales, o quiera saber qué promociones están disponibles."
+    },
+    {
+      "use_case_id": "gen_get_room_prices",
+      "name": "Consultar Costos de Habitaciones",
+      "description": "Consulta los precios y costos de las habitaciones disponibles",
+      "tool_name": "consultar_precios_habitaciones",
+      "tool_description": "Consulta los precios y costos de las habitaciones disponibles. Devuelve información detallada sobre tipos de habitación, precios por noche, precios totales para estancias, capacidad, amenidades y disponibilidad.",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "room_type": {
+            "type": "string",
+            "description": "Tipo de habitación específico (opcional): standard, deluxe, suite",
+            "enum": ["standard", "deluxe", "suite"]
+          },
+          "tipo_habitacion": {
+            "type": "string",
+            "description": "Tipo de habitación (alternativo)",
+            "enum": ["standard", "deluxe", "suite"]
+          },
+          "check_in_date": {
+            "type": "string",
+            "description": "Fecha de entrada (opcional, formato: YYYY-MM-DD)",
+            "format": "date"
+          },
+          "fecha_entrada": {
+            "type": "string",
+            "description": "Fecha de entrada (alternativo)",
+            "format": "date"
+          },
+          "check_out_date": {
+            "type": "string",
+            "description": "Fecha de salida (opcional, formato: YYYY-MM-DD)",
+            "format": "date"
+          },
+          "fecha_salida": {
+            "type": "string",
+            "description": "Fecha de salida (alternativo)",
+            "format": "date"
+          },
+          "nights": {
+            "type": "number",
+            "description": "Número de noches (opcional, se calcula automáticamente si se proporcionan fechas)"
+          },
+          "noches": {
+            "type": "number",
+            "description": "Número de noches (alternativo)"
+          }
+        },
+        "required": []
+      },
+      "prompt_fragment": "Permite consultar los precios y costos de las habitaciones disponibles",
+      "specific_instructions": "Usar cuando el usuario pregunte por precios, costos, tarifas, cuánto cuesta una habitación, o quiera información sobre los diferentes tipos de habitaciones y sus precios."
+    },
+    {
+      "use_case_id": "gen_create_reservation",
+      "name": "Hacer Reservación y Generar Código de Recepción",
+      "description": "Crea una reservación de habitación y genera un código alfanumérico para el check-in en recepción",
+      "tool_name": "crear_reservacion",
+      "tool_description": "Crea una reservación de habitación en el hotel. Requiere datos del huésped, tipo de habitación, fechas de entrada y salida. Genera automáticamente un código alfanumérico único (formato REC-XXXX-YYYY) que se incluye en la respuesta JSON. El huésped debe presentar este código en recepción al llegar para agilizar el check-in. Opcionalmente puede aplicar una promoción si se proporciona el ID de promoción.",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "guest_name": {
+            "type": "string",
+            "description": "Nombre completo del huésped"
+          },
+          "nombre": {
+            "type": "string",
+            "description": "Nombre del huésped (alternativo)"
+          },
+          "nombre_huesped": {
+            "type": "string",
+            "description": "Nombre del huésped (alternativo)"
+          },
+          "guest_email": {
+            "type": "string",
+            "description": "Email del huésped",
+            "format": "email"
+          },
+          "email": {
+            "type": "string",
+            "description": "Email del huésped (alternativo)",
+            "format": "email"
+          },
+          "correo": {
+            "type": "string",
+            "description": "Email del huésped (alternativo)",
+            "format": "email"
+          },
+          "guest_phone": {
+            "type": "string",
+            "description": "Teléfono del huésped"
+          },
+          "telefono": {
+            "type": "string",
+            "description": "Teléfono del huésped (alternativo)"
+          },
+          "phone": {
+            "type": "string",
+            "description": "Teléfono del huésped (alternativo)"
+          },
+          "room_type": {
+            "type": "string",
+            "description": "Tipo de habitación: standard, deluxe, suite",
+            "enum": ["standard", "deluxe", "suite"]
+          },
+          "tipo_habitacion": {
+            "type": "string",
+            "description": "Tipo de habitación (alternativo)",
+            "enum": ["standard", "deluxe", "suite"]
+          },
+          "check_in_date": {
+            "type": "string",
+            "description": "Fecha de entrada (formato: YYYY-MM-DD)",
+            "format": "date"
+          },
+          "fecha_entrada": {
+            "type": "string",
+            "description": "Fecha de entrada (alternativo)",
+            "format": "date"
+          },
+          "check_in": {
+            "type": "string",
+            "description": "Fecha de entrada (alternativo)",
+            "format": "date"
+          },
+          "check_out_date": {
+            "type": "string",
+            "description": "Fecha de salida (formato: YYYY-MM-DD)",
+            "format": "date"
+          },
+          "fecha_salida": {
+            "type": "string",
+            "description": "Fecha de salida (alternativo)",
+            "format": "date"
+          },
+          "check_out": {
+            "type": "string",
+            "description": "Fecha de salida (alternativo)",
+            "format": "date"
+          },
+          "promotion_id": {
+            "type": "string",
+            "description": "ID de promoción a aplicar (opcional, ej: PROM001, PROM002)"
+          },
+          "promocion_id": {
+            "type": "string",
+            "description": "ID de promoción (alternativo)"
+          }
+        },
+        "required": ["guest_name", "guest_email", "guest_phone", "room_type", "check_in_date", "check_out_date"]
+      },
+      "prompt_fragment": "Permite crear una reservación de habitación y generar un código alfanumérico para el check-in",
+      "specific_instructions": "Usar cuando el usuario quiera hacer una reservación, reservar una habitación, hacer un booking, o necesite confirmar una estancia en el hotel. El sistema generará automáticamente un código alfanumérico (formato REC-XXXX-YYYY) que debe presentarse en recepción."
+    },
+    {
+      "use_case_id": "gen_directorio_telef_nico_1764314627615",
+      "name": "Consultar Directorio Telefónico",
+      "description": "Consulta el directorio telefónico de diferentes áreas del hotel",
+      "tool_name": "consultar_directorio_telefonico",
+      "tool_description": "Consulta el directorio telefónico del hotel. Permite buscar contactos por área (recepción, piscina, cocina, spa, etc.), por nombre, por extensión telefónica, o ver todo el directorio completo. Devuelve información de contacto incluyendo teléfono, extensión, email y horarios de atención.",
+      "parameter_schema": {
+        "type": "object",
+        "properties": {
+          "area": {
+            "type": "string",
+            "description": "Área del hotel para filtrar contactos (opcional): recepción, piscina, cocina, spa, mantenimiento, seguridad, conserjería, lavandería, room_service"
+          },
+          "departamento": {
+            "type": "string",
+            "description": "Departamento del hotel (alternativo)"
+          },
+          "department": {
+            "type": "string",
+            "description": "Department (alternativo en inglés)"
+          },
+          "name": {
+            "type": "string",
+            "description": "Nombre del contacto a buscar (opcional)"
+          },
+          "nombre": {
+            "type": "string",
+            "description": "Nombre del contacto (alternativo)"
+          },
+          "extension": {
+            "type": "string",
+            "description": "Número de extensión telefónica a buscar (opcional)"
+          },
+          "ext": {
+            "type": "string",
+            "description": "Extensión (alternativo)"
+          },
+          "all": {
+            "type": "boolean",
+            "description": "Si es true, devuelve todo el directorio completo (opcional)"
+          },
+          "todos": {
+            "type": "boolean",
+            "description": "Todos (alternativo)"
+          },
+          "todo": {
+            "type": "boolean",
+            "description": "Todo (alternativo)"
+          }
+        },
+        "required": []
+      },
+      "prompt_fragment": "Permite consultar el directorio telefónico del hotel por área, nombre, extensión o ver todo el directorio",
+      "specific_instructions": "Usar cuando el usuario pregunte por números de teléfono, extensiones, contactos, directorio, o necesite comunicarse con alguna área específica del hotel (recepción, piscina, cocina, spa, etc.)."
+    }
+  ],
+  "room_types": {
+    "description": "Tipos de habitaciones disponibles en el hotel",
+    "types": {
+      "standard": {
+        "name": "Habitación Estándar",
+        "description": "Habitación cómoda con cama doble, baño privado y todas las comodidades básicas",
+        "base_price_per_night": 1500.00,
+        "max_occupancy": 2
+      },
+      "deluxe": {
+        "name": "Habitación Deluxe",
+        "description": "Habitación amplia con vista, cama king size, minibar y balcón",
+        "base_price_per_night": 2500.00,
+        "max_occupancy": 3
+      },
+      "suite": {
+        "name": "Suite Premium",
+        "description": "Suite de lujo con sala, dormitorio separado, jacuzzi y vista panorámica",
+        "base_price_per_night": 4500.00,
+        "max_occupancy": 4
+      }
+    }
+  },
+  "promotions_structure": {
+    "description": "Estructura de las promociones disponibles. Las promociones se validan automáticamente por fechas y tipos de habitación aplicables.",
+    "notes": "Las promociones pueden tener condiciones especiales como mínimo de noches, tipos de habitación específicos, o períodos de vigencia limitados."
+  }
+}

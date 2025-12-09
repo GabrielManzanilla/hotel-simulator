@@ -1,0 +1,30 @@
+{
+  "name": "hotel-webhook-simulator",
+  "version": "1.0.0",
+  "description": "Backend de prueba para webhooks orientado a negocio hotelero",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "test": "node test-webhook.js"
+  },
+  "keywords": [
+    "webhook",
+    "backend",
+    "express",
+    "javascript",
+    "hotel"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "qrcode": "^1.5.3",
+    "sqlite3": "^5.1.6"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3"
+  }
+}
