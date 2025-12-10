@@ -48,7 +48,7 @@ class RoomsService {
         type: row.type,
         name: row.name,
         description: row.description,
-        base_price_per_night: row.base_price_per_night,
+        base_price_per_night: parseFloat(row.base_price_per_night) || 0,
         total_price: nights ? totalPrice : null,
         nights: nights || null,
         max_occupancy: row.max_occupancy,
@@ -127,7 +127,7 @@ class RoomsService {
       type: row.type,
       name: row.name,
       description: row.description,
-      base_price_per_night: row.base_price_per_night,
+      base_price_per_night: parseFloat(row.base_price_per_night) || 0,
       max_occupancy: row.max_occupancy,
       amenities: amenities,
       available_count: row.available_count

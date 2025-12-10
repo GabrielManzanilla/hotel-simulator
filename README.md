@@ -21,12 +21,13 @@ npm install
 npm start
 ```
 
+**⚠️ IMPORTANTE**: Antes de ejecutar, configura PostgreSQL y las variables de entorno (ver [MIGRACION_POSTGRESQL.md](./MIGRACION_POSTGRESQL.md))
+
 La primera vez que ejecutes el servidor, se creará automáticamente:
-- La base de datos SQLite en `data/hotel.db`
-- El esquema de base de datos con todas las tablas
+- El esquema de base de datos con todas las tablas en PostgreSQL
 - Los datos iniciales (seed) con promociones, habitaciones y directorio telefónico
 
-El servidor se ejecutará en `http://localhost:3001`
+El servidor se ejecutará en `http://localhost:3000` (o el puerto especificado en `PORT`)
 
 ## 📋 Casos de Uso Disponibles
 
@@ -164,9 +165,29 @@ La respuesta es un JSON serializado como string que incluye:
 
 El frontend puede parsear el JSON y mostrar el código de recepción al usuario. El código debe presentarse en recepción al llegar al hotel para agilizar el proceso de check-in.
 
-## 💾 Base de Datos SQLite
+## 💾 Base de Datos PostgreSQL
 
-El sistema utiliza **SQLite** para persistir todos los datos. La base de datos se crea automáticamente al iniciar el servidor por primera vez.
+El sistema utiliza **PostgreSQL** para persistir todos los datos, proporcionando mejor concurrencia y escalabilidad.
+
+### Configuración
+
+Crea un archivo `.env` con las siguientes variables:
+
+```bash
+DB_HOST=localhost
+DB_PORT=5432
+DB_NAME=hotel_db
+DB_USER=hotel_user
+DB_PASSWORD=tu_contraseña
+PORT=3000
+NODE_ENV=production
+```
+
+O usa un connection string completo:
+
+```bash
+DATABASE_URL=postgresql://usuario:contraseña@localhost:5432/hotel_db
+```
 
 ### Estructura de la Base de Datos
 
@@ -177,27 +198,29 @@ El sistema utiliza **SQLite** para persistir todos los datos. La base de datos s
 - **reservations**: Reservaciones creadas
 - **phone_directory**: Directorio telefónico del hotel
 
-### Ubicación
-
-La base de datos se guarda en: `data/hotel.db`
-
 ### Inicialización Automática
 
 Al iniciar el servidor por primera vez:
-1. Se crea la base de datos si no existe
-2. Se crean todas las tablas del esquema
-3. Se insertan los datos iniciales (seed):
+1. Se conecta a PostgreSQL usando las variables de entorno
+2. Se crean todas las tablas del esquema si no existen
+3. Se insertan los datos iniciales (seed) si la base está vacía:
    - 4 promociones
    - 3 tipos de habitaciones
    - 13 contactos del directorio telefónico
 
-### Ventajas de SQLite
+### Ventajas de PostgreSQL
 
-- ✅ **Sin configuración**: No requiere servidor de base de datos separado
-- ✅ **Persistencia**: Los datos se mantienen entre reinicios
-- ✅ **Portable**: Un solo archivo `.db` contiene toda la información
-- ✅ **Rápido**: Ideal para desarrollo y pruebas
-- ✅ **Transaccional**: Soporta transacciones ACID
+- ✅ **Mejor concurrencia**: Escrituras simultáneas sin bloqueos
+- ✅ **Escalabilidad**: Soporta múltiples instancias de PM2 sin problemas
+- ✅ **Producción**: Más adecuado para entornos de producción
+- ✅ **Funciones avanzadas**: JSON, full-text search, etc.
+- ✅ **Transaccional**: Soporta transacciones ACID completas
+
+### Instalación y Configuración
+
+Para configurar PostgreSQL en el servidor, consulta:
+- [MIGRACION_POSTGRESQL.md](./MIGRACION_POSTGRESQL.md) - Guía de migración
+- [CONFIGURAR_POSTGRESQL_SERVIDOR.md](./CONFIGURAR_POSTGRESQL_SERVIDOR.md) - Instrucciones para el servidor
 
 ## 📞 Directorio Telefónico
 
