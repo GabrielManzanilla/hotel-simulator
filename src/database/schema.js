@@ -16,77 +16,77 @@ class Schema {
     const queries = [
       // Tabla de promociones
       `CREATE TABLE IF NOT EXISTS promotions (
-        id TEXT PRIMARY KEY,
-        name TEXT NOT NULL,
+        id VARCHAR(50) PRIMARY KEY,
+        name VARCHAR(255) NOT NULL,
         description TEXT,
-        discount_percentage REAL NOT NULL,
-        valid_from TEXT NOT NULL,
-        valid_until TEXT NOT NULL,
+        discount_percentage DECIMAL(5,2) NOT NULL,
+        valid_from DATE NOT NULL,
+        valid_until DATE NOT NULL,
         min_nights INTEGER,
-        is_active INTEGER DEFAULT 1,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        is_active BOOLEAN DEFAULT true,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
 
       // Tabla de tipos de habitación aplicables a promociones (relación muchos a muchos)
       `CREATE TABLE IF NOT EXISTS promotion_room_types (
-        promotion_id TEXT NOT NULL,
-        room_type TEXT NOT NULL,
+        promotion_id VARCHAR(50) NOT NULL,
+        room_type VARCHAR(50) NOT NULL,
         PRIMARY KEY (promotion_id, room_type),
         FOREIGN KEY (promotion_id) REFERENCES promotions(id) ON DELETE CASCADE
       )`,
 
       // Tabla de habitaciones
       `CREATE TABLE IF NOT EXISTS rooms (
-        room_id TEXT PRIMARY KEY,
-        type TEXT NOT NULL UNIQUE,
-        name TEXT NOT NULL,
+        room_id VARCHAR(50) PRIMARY KEY,
+        type VARCHAR(50) NOT NULL UNIQUE,
+        name VARCHAR(255) NOT NULL,
         description TEXT,
-        base_price_per_night REAL NOT NULL,
+        base_price_per_night DECIMAL(10,2) NOT NULL,
         max_occupancy INTEGER NOT NULL,
         available_count INTEGER DEFAULT 0,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
 
       // Tabla de amenidades de habitaciones (relación muchos a muchos)
       `CREATE TABLE IF NOT EXISTS room_amenities (
-        room_id TEXT NOT NULL,
-        amenity TEXT NOT NULL,
+        room_id VARCHAR(50) NOT NULL,
+        amenity VARCHAR(255) NOT NULL,
         PRIMARY KEY (room_id, amenity),
         FOREIGN KEY (room_id) REFERENCES rooms(room_id) ON DELETE CASCADE
       )`,
 
       // Tabla de reservaciones
       `CREATE TABLE IF NOT EXISTS reservations (
-        reservation_id TEXT PRIMARY KEY,
-        guest_name TEXT NOT NULL,
-        guest_email TEXT NOT NULL,
-        guest_phone TEXT NOT NULL,
-        room_type TEXT NOT NULL,
-        room_name TEXT NOT NULL,
-        check_in_date TEXT NOT NULL,
-        check_out_date TEXT NOT NULL,
+        reservation_id VARCHAR(50) PRIMARY KEY,
+        guest_name VARCHAR(255) NOT NULL,
+        guest_email VARCHAR(255) NOT NULL,
+        guest_phone VARCHAR(50) NOT NULL,
+        room_type VARCHAR(50) NOT NULL,
+        room_name VARCHAR(255) NOT NULL,
+        check_in_date DATE NOT NULL,
+        check_out_date DATE NOT NULL,
         nights INTEGER NOT NULL,
-        base_price REAL NOT NULL,
-        discount REAL DEFAULT 0,
-        total_price REAL NOT NULL,
-        promotion_id TEXT,
-        status TEXT DEFAULT 'confirmed',
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        base_price DECIMAL(10,2) NOT NULL,
+        discount DECIMAL(10,2) DEFAULT 0,
+        total_price DECIMAL(10,2) NOT NULL,
+        promotion_id VARCHAR(50),
+        status VARCHAR(50) DEFAULT 'confirmed',
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         FOREIGN KEY (room_type) REFERENCES rooms(type),
         FOREIGN KEY (promotion_id) REFERENCES promotions(id)
       )`,
 
       // Tabla de directorio telefónico
       `CREATE TABLE IF NOT EXISTS phone_directory (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        area TEXT NOT NULL,
-        name TEXT NOT NULL,
-        position TEXT,
-        phone TEXT,
-        extension TEXT,
-        email TEXT,
-        schedule TEXT,
-        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        id SERIAL PRIMARY KEY,
+        area VARCHAR(100) NOT NULL,
+        name VARCHAR(255) NOT NULL,
+        position VARCHAR(255),
+        phone VARCHAR(50),
+        extension VARCHAR(20),
+        email VARCHAR(255),
+        schedule VARCHAR(255),
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       )`,
 
       // Índices para mejorar rendimiento
@@ -95,6 +95,7 @@ class Schema {
       `CREATE INDEX IF NOT EXISTS idx_rooms_type ON rooms(type)`,
       `CREATE INDEX IF NOT EXISTS idx_reservations_status ON reservations(status)`,
       `CREATE INDEX IF NOT EXISTS idx_reservations_dates ON reservations(check_in_date, check_out_date)`,
+      `CREATE INDEX IF NOT EXISTS idx_reservations_email ON reservations(guest_email)`,
       `CREATE INDEX IF NOT EXISTS idx_phone_directory_area ON phone_directory(area)`,
       `CREATE INDEX IF NOT EXISTS idx_phone_directory_extension ON phone_directory(extension)`
     ];

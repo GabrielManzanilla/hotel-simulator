@@ -21,10 +21,10 @@ class PromotionsService {
 
     let sql = `
       SELECT DISTINCT p.*, 
-             GROUP_CONCAT(prt.room_type) as applicable_room_types
+             STRING_AGG(prt.room_type, ',') as applicable_room_types
       FROM promotions p
       LEFT JOIN promotion_room_types prt ON p.id = prt.promotion_id
-      WHERE p.is_active = 1
+      WHERE p.is_active = true
         AND p.valid_from <= ?
         AND p.valid_until >= ?
     `;
@@ -38,7 +38,7 @@ class PromotionsService {
       params.push(roomType);
     }
 
-    sql += ` GROUP BY p.id`;
+    sql += ` GROUP BY p.id, p.name, p.description, p.discount_percentage, p.valid_from, p.valid_until, p.min_nights, p.is_active, p.created_at`;
 
     const rows = await this.db.all(sql, params);
 
@@ -103,7 +103,7 @@ class PromotionsService {
         valid_until: promotion.valid_until,
         applicable_room_types: applicableRoomTypes,
         min_nights: promotion.min_nights || null,
-        is_active: promotion.is_active === 1
+        is_active: promotion.is_active === true || promotion.is_active === 1
       }
     };
   }
@@ -115,10 +115,10 @@ class PromotionsService {
   async getAllPromotions() {
     const rows = await this.db.all(`
       SELECT p.*, 
-             GROUP_CONCAT(prt.room_type) as applicable_room_types
+             STRING_AGG(prt.room_type, ',') as applicable_room_types
       FROM promotions p
       LEFT JOIN promotion_room_types prt ON p.id = prt.promotion_id
-      GROUP BY p.id
+      GROUP BY p.id, p.name, p.description, p.discount_percentage, p.valid_from, p.valid_until, p.min_nights, p.is_active, p.created_at
     `);
 
     return rows.map(row => {
@@ -135,7 +135,7 @@ class PromotionsService {
         valid_until: row.valid_until,
         applicable_room_types: applicableRoomTypes,
         min_nights: row.min_nights || null,
-        is_active: row.is_active === 1
+        is_active: row.is_active === true || row.is_active === 1
       };
     });
   }

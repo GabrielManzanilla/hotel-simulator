@@ -1,78 +1,97 @@
 /**
- * Módulo de Base de Datos SQLite
+ * Módulo de Base de Datos PostgreSQL
  * Responsabilidad única: Gestionar la conexión y operaciones de base de datos
  * Principio SOLID: Single Responsibility Principle (SRP)
  */
-const sqlite3 = require('sqlite3').verbose();
-const path = require('path');
-const fs = require('fs');
+const { Pool } = require('pg');
 
 class Database {
-  constructor(dbPath = null) {
-    this.dbPath = dbPath || path.join(__dirname, '../../data/hotel.db');
-    this.db = null;
+  constructor(connectionConfig = null) {
+    // Configuración por defecto desde variables de entorno
+    this.pool = null;
+    this.connectionConfig = connectionConfig || {
+      connectionString: process.env.DATABASE_URL,
+      host: process.env.DB_HOST || 'localhost',
+      port: process.env.DB_PORT || 5432,
+      database: process.env.DB_NAME || 'hotel_db',
+      user: process.env.DB_USER || 'postgres',
+      password: process.env.DB_PASSWORD || 'postgres',
+      max: 20, // Máximo de conexiones en el pool
+      idleTimeoutMillis: 30000,
+      connectionTimeoutMillis: 2000,
+    };
   }
 
   /**
-   * Conectar a la base de datos
+   * Convertir placeholders de SQLite (?) a PostgreSQL ($1, $2, ...)
+   * @param {string} sql - Consulta SQL con placeholders ?
+   * @param {Array} params - Parámetros
+   * @returns {string} SQL con placeholders de PostgreSQL
+   */
+  _convertPlaceholders(sql, params = []) {
+    if (!params || params.length === 0) {
+      return sql;
+    }
+    
+    let paramIndex = 1;
+    return sql.replace(/\?/g, () => `$${paramIndex++}`);
+  }
+
+  /**
+   * Conectar a la base de datos (crear pool de conexiones)
    * @returns {Promise<void>}
    */
-  connect() {
-    return new Promise((resolve, reject) => {
-      // Crear directorio data si no existe
-      const dataDir = path.dirname(this.dbPath);
-      if (!fs.existsSync(dataDir)) {
-        fs.mkdirSync(dataDir, { recursive: true });
-      }
-
-      this.db = new sqlite3.Database(this.dbPath, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          console.log('✅ Conectado a la base de datos SQLite');
-          resolve();
-        }
-      });
-    });
+  async connect() {
+    try {
+      this.pool = new Pool(this.connectionConfig);
+      
+      // Probar la conexión
+      const client = await this.pool.connect();
+      await client.query('SELECT NOW()');
+      client.release();
+      
+      console.log('✅ Conectado a la base de datos PostgreSQL');
+    } catch (error) {
+      console.error('❌ Error conectando a PostgreSQL:', error.message);
+      throw error;
+    }
   }
 
   /**
-   * Cerrar conexión a la base de datos
+   * Cerrar conexión a la base de datos (cerrar pool)
    * @returns {Promise<void>}
    */
-  close() {
-    return new Promise((resolve, reject) => {
-      if (this.db) {
-        this.db.close((err) => {
-          if (err) {
-            reject(err);
-          } else {
-            console.log('✅ Conexión a la base de datos cerrada');
-            resolve();
-          }
-        });
-      } else {
-        resolve();
-      }
-    });
+  async close() {
+    if (this.pool) {
+      await this.pool.end();
+      console.log('✅ Conexión a la base de datos cerrada');
+    }
   }
 
   /**
-   * Ejecutar una consulta SQL
+   * Ejecutar una consulta SQL (INSERT, UPDATE, DELETE)
    * @param {string} sql - Consulta SQL
    * @param {Array} params - Parámetros de la consulta
    * @returns {Promise<any>}
    */
-  run(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.db.run(sql, params, function(err) {
-        if (err) {
-          reject(err);
-        } else {
-          resolve({ lastID: this.lastID, changes: this.changes });
-        }
-      });
-    });
+  async run(sql, params = []) {
+    if (!this.pool) {
+      throw new Error('Base de datos no conectada. Llama a connect() primero.');
+    }
+
+    try {
+      // Convertir placeholders ? a $1, $2, ...
+      const pgSql = this._convertPlaceholders(sql, params);
+      const result = await this.pool.query(pgSql, params);
+      
+      return {
+        lastID: result.rows[0]?.id || result.insertId || null,
+        changes: result.rowCount || 0
+      };
+    } catch (error) {
+      console.error('Error ejecutando query:', sql, error);
+      throw error;
+    }
   }
 
   /**
@@ -81,16 +100,21 @@ class Database {
    * @param {Array} params - Parámetros de la consulta
    * @returns {Promise<Object|null>}
    */
-  get(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.db.get(sql, params, (err, row) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(row || null);
-        }
-      });
-    });
+  async get(sql, params = []) {
+    if (!this.pool) {
+      throw new Error('Base de datos no conectada. Llama a connect() primero.');
+    }
+
+    try {
+      // Convertir placeholders ? a $1, $2, ...
+      const pgSql = this._convertPlaceholders(sql, params);
+      const result = await this.pool.query(pgSql, params);
+      
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error('Error ejecutando query:', sql, error);
+      throw error;
+    }
   }
 
   /**
@@ -99,16 +123,21 @@ class Database {
    * @param {Array} params - Parámetros de la consulta
    * @returns {Promise<Array>}
    */
-  all(sql, params = []) {
-    return new Promise((resolve, reject) => {
-      this.db.all(sql, params, (err, rows) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(rows || []);
-        }
-      });
-    });
+  async all(sql, params = []) {
+    if (!this.pool) {
+      throw new Error('Base de datos no conectada. Llama a connect() primero.');
+    }
+
+    try {
+      // Convertir placeholders ? a $1, $2, ...
+      const pgSql = this._convertPlaceholders(sql, params);
+      const result = await this.pool.query(pgSql, params);
+      
+      return result.rows || [];
+    } catch (error) {
+      console.error('Error ejecutando query:', sql, error);
+      throw error;
+    }
   }
 
   /**
@@ -117,38 +146,36 @@ class Database {
    * @returns {Promise<void>}
    */
   async transaction(queries) {
-    return new Promise((resolve, reject) => {
-      this.db.serialize(() => {
-        this.db.run('BEGIN TRANSACTION');
-        
-        queries.forEach((query, index) => {
-          this.db.run(query.sql, query.params, (err) => {
-            if (err) {
-              this.db.run('ROLLBACK');
-              reject(err);
-            } else if (index === queries.length - 1) {
-              this.db.run('COMMIT', (err) => {
-                if (err) {
-                  reject(err);
-                } else {
-                  resolve();
-                }
-              });
-            }
-          });
-        });
-      });
-    });
+    if (!this.pool) {
+      throw new Error('Base de datos no conectada. Llama a connect() primero.');
+    }
+
+    const client = await this.pool.connect();
+    
+    try {
+      await client.query('BEGIN');
+      
+      for (const query of queries) {
+        const pgSql = this._convertPlaceholders(query.sql, query.params);
+        await client.query(pgSql, query.params);
+      }
+      
+      await client.query('COMMIT');
+    } catch (error) {
+      await client.query('ROLLBACK');
+      throw error;
+    } finally {
+      client.release();
+    }
   }
 
   /**
-   * Obtener la instancia de la base de datos
-   * @returns {sqlite3.Database}
+   * Obtener el pool de conexiones (para uso avanzado)
+   * @returns {Pool}
    */
   getDB() {
-    return this.db;
+    return this.pool;
   }
 }
 
 module.exports = Database;
-

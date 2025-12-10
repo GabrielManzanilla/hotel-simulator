@@ -40,7 +40,7 @@ class Seed {
         valid_from: '2025-03-01',
         valid_until: '2025-03-31',
         min_nights: null,
-        is_active: 1,
+        is_active: true,
         room_types: ['standard', 'deluxe', 'suite']
       },
       {
@@ -51,7 +51,7 @@ class Seed {
         valid_from: '2025-01-01',
         valid_until: '2025-12-31',
         min_nights: null,
-        is_active: 1,
+        is_active: true,
         room_types: ['standard', 'deluxe']
       },
       {
@@ -62,7 +62,7 @@ class Seed {
         valid_from: '2025-01-01',
         valid_until: '2025-12-31',
         min_nights: 5,
-        is_active: 1,
+        is_active: true,
         room_types: ['standard', 'deluxe', 'suite']
       },
       {
@@ -73,7 +73,7 @@ class Seed {
         valid_from: '2025-02-01',
         valid_until: '2025-04-30',
         min_nights: null,
-        is_active: 1,
+        is_active: true,
         room_types: ['suite']
       }
     ];

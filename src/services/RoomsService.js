@@ -20,7 +20,7 @@ class RoomsService {
   async getRoomPrices(roomType = null, checkInDate = null, checkOutDate = null, nights = null) {
     let sql = `
       SELECT r.*, 
-             GROUP_CONCAT(ra.amenity) as amenities
+             STRING_AGG(ra.amenity, ',') as amenities
       FROM rooms r
       LEFT JOIN room_amenities ra ON r.room_id = ra.room_id
     `;
@@ -31,7 +31,7 @@ class RoomsService {
       params.push(roomType);
     }
 
-    sql += ` GROUP BY r.room_id`;
+    sql += ` GROUP BY r.room_id, r.type, r.name, r.description, r.base_price_per_night, r.max_occupancy, r.available_count, r.created_at`;
 
     const rows = await this.db.all(sql, params);
 
@@ -108,11 +108,11 @@ class RoomsService {
   async getRoomByType(roomType) {
     const row = await this.db.get(
       `SELECT r.*, 
-              GROUP_CONCAT(ra.amenity) as amenities
+              STRING_AGG(ra.amenity, ',') as amenities
        FROM rooms r
        LEFT JOIN room_amenities ra ON r.room_id = ra.room_id
        WHERE r.type = ?
-       GROUP BY r.room_id`,
+       GROUP BY r.room_id, r.type, r.name, r.description, r.base_price_per_night, r.max_occupancy, r.available_count, r.created_at`,
       [roomType]
     );
 
@@ -168,10 +168,10 @@ class RoomsService {
   async getAllRooms() {
     const rows = await this.db.all(`
       SELECT r.*, 
-             GROUP_CONCAT(ra.amenity) as amenities
+             STRING_AGG(ra.amenity, ',') as amenities
       FROM rooms r
       LEFT JOIN room_amenities ra ON r.room_id = ra.room_id
-      GROUP BY r.room_id
+      GROUP BY r.room_id, r.type, r.name, r.description, r.base_price_per_night, r.max_occupancy, r.available_count, r.created_at
     `);
 
     return rows.map(row => {
